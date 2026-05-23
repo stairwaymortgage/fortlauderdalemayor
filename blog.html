@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Fort Lauderdale Mayor Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --navy: #0a1628; --gold: #c9a84c; --gold-light: #e8d5a3; --cream: #f8f5ef; --text: #1a1a1a; --text-muted: #555; --border: rgba(201,168,76,0.25); }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+  .disclosure { background: var(--navy); color: var(--gold-light); font-size: 12px; text-align: center; padding: 10px 20px; letter-spacing: 0.04em; }
+  .disclosure a { color: var(--gold); text-decoration: underline; }
+  .nav { background: var(--cream); border-bottom: 1px solid var(--border); padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); line-height: 1.2; }
+  .nav-logo span { display: block; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; }
+  .nav-links a.active { color: var(--navy); font-weight: 500; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+  .blog-hero { background: var(--navy); padding: 56px 40px 48px; position: relative; overflow: hidden; }
+  .blog-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.1); }
+  .blog-hero-inner { position: relative; z-index: 1; }
+  .blog-hero-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .blog-hero h1 { font-family: 'Playfair Display', serif; font-size: 40px; color: white; font-weight: 700; margin-bottom: 12px; }
+  .blog-hero p { font-size: 15px; color: rgba(255,255,255,0.6); font-weight: 300; max-width: 520px; line-height: 1.65; }
+  .blog-body { padding: 56px 40px; display: grid; grid-template-columns: 1fr 300px; gap: 56px; max-width: 1100px; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
+  .filter-btn { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 16px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 2px; font-family: 'DM Sans', sans-serif; }
+  .filter-btn.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+  .post-featured { background: white; border: 1px solid var(--border); padding: 36px; margin-bottom: 1px; cursor: pointer; }
+  .post-featured-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .post-featured-tag::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--gold); }
+  .featured-badge { background: var(--navy); color: var(--gold); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 2px; }
+  .post-featured h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .post-featured p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; max-width: 580px; }
+  .post-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 16px; align-items: center; }
+  .read-link { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-left: auto; }
+  .post-card { background: var(--cream); border-bottom: 1px solid var(--border); padding: 28px 0; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .post-card-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .post-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); font-weight: 700; margin-bottom: 8px; line-height: 1.35; }
+  .post-card p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .post-card-meta { font-size: 11px; color: var(--text-muted); margin-top: 10px; }
+  .post-card-arrow { font-size: 18px; color: var(--border); padding-top: 4px; }
+  .sidebar { display: flex; flex-direction: column; gap: 32px; }
+  .sidebar-card { border: 1px solid var(--border); padding: 24px; background: white; }
+  .sidebar-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .issue-pill { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(201,168,76,0.1); cursor: pointer; }
+  .issue-pill:last-child { border-bottom: none; }
+  .issue-num { font-size: 11px; color: var(--gold); font-weight: 500; min-width: 20px; }
+  .issue-name { font-size: 13px; color: var(--navy); }
+  .issue-count { margin-left: auto; font-size: 11px; color: var(--text-muted); background: var(--cream); padding: 2px 8px; border-radius: 2px; }
+  .subscribe-card { background: var(--navy); border: none; padding: 28px; }
+  .subscribe-card .sidebar-title { color: white; border-bottom-color: rgba(255,255,255,0.1); }
+  .subscribe-card p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 16px; }
+  .subscribe-input { width: 100%; padding: 10px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif; border: 1px solid rgba(201,168,76,0.3); background: rgba(255,255,255,0.07); color: white; border-radius: 2px; margin-bottom: 10px; }
+  .subscribe-btn { width: 100%; padding: 11px; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .footer { background: var(--navy); border-top: 1px solid rgba(201,168,76,0.2); padding: 40px 40px 28px; color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.7; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; color: white; margin-bottom: 12px; }
+  .footer-disc { max-width: 600px; margin-bottom: 24px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--gold); font-size: 12px; text-decoration: none; }
+  @media (max-width: 860px) { .blog-body { grid-template-columns: 1fr; } .sidebar { display: none; } .nav { padding: 16px 20px; } .nav-links { display: none; } .blog-hero { padding: 48px 20px 40px; } .blog-body { padding: 40px 20px; } .footer { padding: 32px 20px 24px; } }
+</style>
+
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <div class="blog-hero-tag">The Journal</div>
+    <h1>Weekly Dispatches from the City</h1>
+    <p>Every week — what I'm learning, who I'm talking to, and what Fort Lauderdale's five biggest issues actually look like on the ground.</p>
+  </div>
+</div>
+<div class="blog-body">
+  <div>
+    <div class="filter-bar">
+      <button class="filter-btn active">All Posts</button>
+      <button class="filter-btn">Flood Infrastructure</button>
+      <button class="filter-btn">Housing</button>
+      <button class="filter-btn">Neighborhoods</button>
+      <button class="filter-btn">Environment</button>
+      <button class="filter-btn">Economy</button>
+      <button class="filter-btn">The Journey</button>
+    </div>
+    <div class="post-featured">
+      <div class="post-featured-tag">Flood Infrastructure <span class="featured-badge">Latest</span></div>
+      <h2>Why Las Olas Boulevard Floods Every King Tide — And What the City Is Actually Doing About It</h2>
+      <p>I attended last Tuesday's stormwater infrastructure workshop and asked the questions residents never get answered at town halls. Here's what I found out about the $500M drainage project and why it may not be enough.</p>
+      <div class="post-meta"><span>March 10, 2026</span><span>·</span><span>8 min read</span><span class="read-link">Read →</span></div>
+    </div>
+    <div class="post-card"><div><div class="post-card-tag">Housing Affordability</div><h3>A Teacher Making $58,000 Can't Afford to Live in the City She Teaches In</h3><p>I sat down with three Broward County teachers who commute 45+ minutes each way because Fort Lauderdale rents have pushed them out.</p><div class="post-card-meta">March 3, 2026 · 6 min read</div></div><div class="post-card-arrow">→</div></div>
+    <div class="post-card"><div><div class="post-card-tag">Neighborhood Preservation</div><h3>Victoria Park Residents vs. The Developer: Inside Fort Lauderdale's Zoning Wars</h3><p>Attended my first neighborhood association meeting. A three-hour battle over a proposed 14-story building two blocks from single-family homes.</p><div class="post-card-meta">Feb 24, 2026 · 7 min read</div></div><div class="post-card-arrow">→</div></div>
+    <div class="post-card"><div><div class="post-card-tag">The Journey</div><h3>Why I'm Spending the Next 12 Years Trying to Become Mayor of Fort Lauderdale</h3><p>The origin story. Why I started this project, what I believe about local leadership, and what I'm committing to do publicly over the next decade.</p><div class="post-card-meta">Feb 17, 2026 · 5 min read</div></div><div class="post-card-arrow">→</div></div>
+    <div class="post-card"><div><div class="post-card-tag">Environmental Resilience</div><h3>Sea Level Rise Is Already Reshaping Fort Lauderdale Real Estate — Here's the Data</h3><p>A deep dive into what NOAA projections actually mean for property values, flood insurance, and the long-term livability of a barrier island city.</p><div class="post-card-meta">Feb 10, 2026 · 9 min read</div></div><div class="post-card-arrow">→</div></div>
+    <div class="post-card"><div><div class="post-card-tag">Economic Development</div><h3>Fort Lauderdale's Small Businesses Are Being Priced Out by the Tourism Boom That Needs Them</h3><p>Commercial rents on Las Olas have tripled in eight years. The businesses that made the street worth visiting can no longer afford to be there.</p><div class="post-card-meta">Feb 3, 2026 · 6 min read</div></div><div class="post-card-arrow">→</div></div>
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-card subscribe-card">
+      <div class="sidebar-title">Follow the Journey</div>
+      <p>Weekly dispatches on Fort Lauderdale's biggest issues — straight to your inbox.</p>
+      <input class="subscribe-input" type="email" placeholder="Your email address" />
+      <button class="subscribe-btn">Subscribe</button>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Browse by Issue</div>
+      <div class="issue-pill"><span class="issue-num">01</span><span class="issue-name">Flood Infrastructure</span><span class="issue-count">12</span></div>
+      <div class="issue-pill"><span class="issue-num">02</span><span class="issue-name">Housing Affordability</span><span class="issue-count">9</span></div>
+      <div class="issue-pill"><span class="issue-num">03</span><span class="issue-name">Neighborhood Preservation</span><span class="issue-count">8</span></div>
+      <div class="issue-pill"><span class="issue-num">04</span><span class="issue-name">Environmental Resilience</span><span class="issue-count">7</span></div>
+      <div class="issue-pill"><span class="issue-num">05</span><span class="issue-name">Economic Development</span><span class="issue-count">6</span></div>
+      <div class="issue-pill"><span class="issue-num">✍</span><span class="issue-name">The Journey</span><span class="issue-count">4</span></div>
+    </div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+
+<script src="/js/components.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

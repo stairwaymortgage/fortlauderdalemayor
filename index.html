@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fort Lauderdale Mayor — A 14-Year Civic Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0a1628; --navy-mid: #1a2d4a; --gold: #c9a84c; --gold-light: #e8d5a3;
+    --cream: #f8f5ef; --text: #1a1a1a; --text-muted: #555; --border: rgba(201,168,76,0.25);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+  .disclosure { background: var(--navy); color: var(--gold-light); font-size: 12px; text-align: center; padding: 10px 20px; letter-spacing: 0.04em; }
+  .disclosure a { color: var(--gold); text-decoration: underline; cursor: pointer; }
+  .nav { background: var(--cream); border-bottom: 1px solid var(--border); padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); line-height: 1.2; }
+  .nav-logo span { display: block; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { font-size: 13px; font-weight: 400; color: var(--text-muted); text-decoration: none; letter-spacing: 0.03em; cursor: pointer; }
+  .nav-links a:hover { color: var(--navy); }
+  .hero { background: var(--navy); color: white; padding: 80px 40px 90px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 400px; height: 400px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.12); }
+  .hero::after { content: ''; position: absolute; bottom: -80px; left: 20%; width: 300px; height: 300px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.08); }
+  .hero-inner { max-width: 760px; position: relative; z-index: 1; }
+  .hero-tag { display: inline-block; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(201,168,76,0.4); padding: 5px 14px; border-radius: 2px; margin-bottom: 28px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(38px, 5vw, 58px); line-height: 1.12; font-weight: 700; margin-bottom: 24px; color: white; }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero-sub { font-size: 17px; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.72); max-width: 580px; margin-bottom: 40px; }
+  .hero-cta { display: inline-block; background: var(--gold); color: var(--navy); font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 32px; border-radius: 2px; text-decoration: none; cursor: pointer; }
+  .section { padding: 72px 40px; }
+  .section-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--navy); margin-bottom: 16px; line-height: 1.25; }
+  .section-body { font-size: 16px; color: var(--text-muted); line-height: 1.75; max-width: 620px; margin-bottom: 48px; }
+  .issues-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .issue-card { background: var(--cream); padding: 32px 28px; cursor: pointer; transition: background 0.2s; position: relative; }
+  .issue-card:hover { background: white; }
+  .issue-card.blog-card { background: var(--navy); display: flex; flex-direction: column; justify-content: space-between; }
+  .issue-card.blog-card:hover { background: var(--navy-mid); }
+  .issue-number { font-family: 'Playfair Display', serif; font-size: 42px; color: var(--gold); opacity: 0.4; line-height: 1; margin-bottom: 16px; }
+  .issue-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 10px; font-weight: 700; }
+  .issue-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .blog-card .issue-number { color: var(--gold); opacity: 0.3; }
+  .blog-card .issue-title { color: white; }
+  .blog-card .issue-desc { color: rgba(255,255,255,0.55); }
+  .blog-arrow { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); border-top: 1px solid rgba(201,168,76,0.25); padding-top: 16px; }
+  .blog-arrow::after { content: '→'; font-size: 14px; }
+  .mission { background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .mission-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 900px; }
+  .mission-quote { font-family: 'Playfair Display', serif; font-size: 22px; line-height: 1.5; color: var(--navy); border-left: 3px solid var(--gold); padding-left: 24px; }
+  .mission-text { font-size: 15px; color: var(--text-muted); line-height: 1.75; }
+  .timeline-section { background: var(--navy); color: white; }
+  .timeline-section .section-title { color: white; }
+  .timeline-section .section-body { color: rgba(255,255,255,0.6); }
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { display: flex; gap: 24px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08); align-items: flex-start; }
+  .timeline-year { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gold); min-width: 80px; padding-top: 2px; letter-spacing: 0.05em; }
+  .timeline-content { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+  .timeline-content strong { color: white; font-weight: 500; display: block; margin-bottom: 3px; }
+  .footer { background: var(--navy); border-top: 1px solid rgba(201,168,76,0.2); padding: 40px 40px 28px; color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.7; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; color: white; margin-bottom: 12px; }
+  .footer-disc { max-width: 600px; margin-bottom: 24px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--gold); font-size: 12px; text-decoration: none; }
+  @media (max-width: 820px) { .issues-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) {
+    .issues-grid { grid-template-columns: 1fr; }
+    .nav { padding: 16px 20px; } .nav-links { display: none; }
+    .hero { padding: 56px 20px 64px; } .section { padding: 56px 20px; }
+    .mission-inner { grid-template-columns: 1fr; gap: 32px; } .footer { padding: 32px 20px 24px; }
+  }
+</style>
+
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Fort Lauderdale · 2026–2040</div>
+    <h1>Studying the Future<br>of <em>Fort Lauderdale</em></h1>
+    <p class="hero-sub">A decade-long public project documenting the five major issues shaping Fort Lauderdale — and what it takes to lead a city toward real solutions.</p>
+    <a class="hero-cta" href="/five-issues">Explore the Issues</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">The Five Issues + More</div>
+  <div class="section-title">What actually matters<br>in Fort Lauderdale</div>
+  <p class="section-body">Every week this project goes deeper on the real problems facing the city — not political talking points, but the issues residents deal with every single day.</p>
+  <div class="issues-grid">
+    <div class="issue-card"><div class="issue-number">01</div><div class="issue-title">Flood Infrastructure</div><p class="issue-desc">Stormwater systems, sea level rise, king tide flooding, and the infrastructure decisions that determine whether our neighborhoods stay dry.</p></div>
+    <div class="issue-card"><div class="issue-number">02</div><div class="issue-title">Housing Affordability</div><p class="issue-desc">Rising rents, workforce housing, zoning policy, and the question of who can actually afford to live in Fort Lauderdale.</p></div>
+    <div class="issue-card"><div class="issue-number">03</div><div class="issue-title">Neighborhood Preservation</div><p class="issue-desc">Development pressure, short-term rentals, traffic spillover, and protecting the character of the communities people love.</p></div>
+    <div class="issue-card"><div class="issue-number">04</div><div class="issue-title">Environmental Resilience</div><p class="issue-desc">Coastal protection, water quality, sustainability planning, and preparing a barrier island city for a changing climate.</p></div>
+    <div class="issue-card"><div class="issue-number">05</div><div class="issue-title">Economic Development</div><p class="issue-desc">Local business growth, tourism economy, redevelopment projects, and building a city where people and businesses can both thrive.</p></div>
+    <div class="issue-card blog-card"><div><div class="issue-number">✍</div><div class="issue-title">Read the Blog</div><p class="issue-desc">Weekly insights, research, and observations from the ground — documenting this 14-year civic journey in real time.</p></div><div class="blog-arrow">Read all posts</div></div>
+  </div>
+</section>
+
+<section class="section mission">
+  <div class="mission-inner">
+    <div class="mission-quote">"Most people complain about their city. Very few step forward to study it — and fewer still commit to doing something about it."</div>
+    <div>
+      <div class="section-label">The Mission</div>
+      <p class="mission-text">This is a long-term public project — not a campaign. The goal is to spend the next decade genuinely learning how Fort Lauderdale works: attending meetings, talking to residents, studying the data, and documenting everything publicly.<br><br>If that work eventually leads somewhere, it will be because the community decided it should.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section timeline-section">
+  <div class="section-label">The 14-Year Plan</div>
+  <div class="section-title">A public commitment</div>
+  <p class="section-body">This project runs on a simple idea: show up consistently, learn deeply, and let the work speak for itself over time.</p>
+  <div class="timeline">
+    <div class="timeline-item"><div class="timeline-year">2026–2028</div><div class="timeline-content"><strong>Learn the city</strong>Attend commission meetings, study the five issues, build relationships in the civic community. Show up before anyone is watching.</div></div>
+    <div class="timeline-item"><div class="timeline-year">2028–2030</div><div class="timeline-content"><strong>Serve in an advisory role</strong>Apply for city boards and committees. Contribute to policy discussions. Build credibility through participation.</div></div>
+    <div class="timeline-item"><div class="timeline-year">2030–2032</div><div class="timeline-content"><strong>Run for City Commission</strong>First elected office. Win a district seat. Learn how legislation actually works from the inside.</div></div>
+    <div class="timeline-item"><div class="timeline-year">2032–2036</div><div class="timeline-content"><strong>Serve as commissioner</strong>Solve visible problems. Champion the five issues. Build a citywide reputation beyond the district.</div></div>
+    <div class="timeline-item"><div class="timeline-year">November 2036</div><div class="timeline-content"><strong>First mayoral run</strong>Introduce yourself to the city. Build the coalition. Win or lose — 20,000+ voters now know your name.</div></div>
+    <div class="timeline-item"><div class="timeline-year">2036–2040</div><div class="timeline-content"><strong>Keep building</strong>Four more years of visibility, service, and credibility. The 2036 campaign opens the door. The next four years walk through it.</div></div>
+    <div class="timeline-item"><div class="timeline-year">November 2040</div><div class="timeline-content"><strong>Win.</strong>Fourteen years of documented service. A citywide coalition. A proven track record. A city that already knows your name.</div></div>
+  </div></div>
+  </div>
+</section>
+
+
+<div id="footer-placeholder"></div>
+
+<script src="/js/components.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

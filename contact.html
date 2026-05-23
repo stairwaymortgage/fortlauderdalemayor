@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Fort Lauderdale Mayor Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --navy: #0a1628; --navy-mid: #1a2d4a; --gold: #c9a84c; --gold-light: #e8d5a3; --cream: #f8f5ef; --text: #1a1a1a; --text-muted: #555; --border: rgba(201,168,76,0.25); }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+  .disclosure { background: var(--navy); color: var(--gold-light); font-size: 12px; text-align: center; padding: 10px 20px; letter-spacing: 0.04em; }
+  .disclosure a { color: var(--gold); text-decoration: underline; }
+  .nav { background: var(--cream); border-bottom: 1px solid var(--border); padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); line-height: 1.2; }
+  .nav-logo span { display: block; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; cursor: pointer; }
+  .nav-links a.active { color: var(--navy); font-weight: 500; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+  .contact-hero { background: var(--navy); padding: 64px 40px; position: relative; overflow: hidden; }
+  .contact-hero::before { content: ''; position: absolute; top: -80px; right: -60px; width: 400px; height: 400px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.08); }
+  .contact-hero-inner { position: relative; z-index: 1; max-width: 640px; }
+  .contact-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .contact-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 4vw, 46px); color: white; font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+  .contact-hero h1 em { color: var(--gold); font-style: normal; }
+  .contact-hero p { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.75; font-weight: 300; max-width: 500px; }
+  .contact-body { display: grid; grid-template-columns: 1fr 380px; }
+  .contact-form-wrap { padding: 64px 48px 64px 40px; border-right: 1px solid var(--border); }
+  .form-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--navy); font-weight: 700; margin-bottom: 8px; }
+  .form-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 36px; line-height: 1.65; }
+  .form-row { margin-bottom: 20px; }
+  .form-row label { display: block; font-size: 12px; font-weight: 500; color: var(--navy); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+  .form-row input, .form-row select, .form-row textarea { width: 100%; padding: 12px 16px; font-size: 14px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); background: white; color: var(--text); border-radius: 2px; outline: none; transition: border-color 0.15s; }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--gold); }
+  .form-row textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+  .form-row select { appearance: none; cursor: pointer; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-submit { width: 100%; padding: 14px; background: var(--navy); color: var(--gold); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-top: 8px; }
+  .form-note { font-size: 12px; color: var(--text-muted); margin-top: 14px; line-height: 1.6; }
+  .contact-sidebar { padding: 64px 40px; background: white; display: flex; flex-direction: column; gap: 32px; }
+  .sidebar-block { padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .sidebar-block:last-child { border-bottom: none; padding-bottom: 0; }
+  .sidebar-block-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--navy); font-weight: 700; margin-bottom: 14px; }
+  .sidebar-block p { font-size: 14px; color: var(--text-muted); line-height: 1.75; margin-bottom: 12px; }
+  .contact-method { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .contact-method:last-child { border-bottom: none; }
+  .contact-icon { width: 36px; height: 36px; border-radius: 2px; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--gold); flex-shrink: 0; }
+  .contact-method-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+  .contact-method-value { font-size: 14px; color: var(--navy); font-weight: 500; }
+  .contact-method-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .social-btn { padding: 10px 14px; border: 1px solid var(--border); border-radius: 2px; font-size: 12px; font-weight: 500; color: var(--navy); cursor: pointer; text-align: center; text-decoration: none; display: block; }
+  .community-card { background: var(--navy); padding: 24px; border-radius: 2px; }
+  .community-card p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.7; margin-bottom: 14px; }
+  .community-btn-title { font-family: 'Playfair Display', serif; font-size: 15px; color: white; font-weight: 700; margin-bottom: 10px; }
+  .community-btn { display: block; width: 100%; padding: 11px; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: center; text-decoration: none; }
+  .success-msg { display: none; background: #eaf6ef; border: 1px solid #52b788; border-radius: 2px; padding: 16px 20px; margin-top: 16px; font-size: 14px; color: #1a3a2a; line-height: 1.6; }
+  .footer { background: var(--navy); border-top: 1px solid rgba(201,168,76,0.2); padding: 40px 40px 28px; color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.7; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; color: white; margin-bottom: 12px; }
+  .footer-disc { max-width: 600px; margin-bottom: 24px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--gold); font-size: 12px; text-decoration: none; }
+  @media (max-width: 860px) {
+    .contact-body { grid-template-columns: 1fr; }
+    .contact-form-wrap { padding: 40px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+    .contact-sidebar { padding: 40px 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .nav { padding: 16px 20px; } .nav-links { display: none; }
+    .contact-hero { padding: 48px 20px; } .footer { padding: 32px 20px 24px; }
+  }
+</style>
+
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="contact-hero">
+  <div class="contact-hero-inner">
+    <div class="contact-tag">Get in Touch</div>
+    <h1>Let's Talk About<br><em>Fort Lauderdale</em></h1>
+    <p>Whether you're a resident with a story to share, a community leader who wants to connect, a journalist covering local issues, or someone who just wants to follow the journey — I want to hear from you.</p>
+  </div>
+</div>
+<div class="contact-body">
+  <div class="contact-form-wrap">
+    <div class="form-title">Send a Message</div>
+    <p class="form-sub">I read every message personally. Response time is typically 2-3 business days. If you're a journalist on deadline, please note that in your message.</p>
+    <div class="form-grid">
+      <div class="form-row"><label>First Name</label><input type="text" placeholder="Your first name" id="fname" /></div>
+      <div class="form-row"><label>Last Name</label><input type="text" placeholder="Your last name" id="lname" /></div>
+    </div>
+    <div class="form-row"><label>Email Address</label><input type="email" placeholder="your@email.com" id="email" /></div>
+    <div class="form-row">
+      <label>Neighborhood (optional)</label>
+      <select id="neighborhood">
+        <option value="">Select your neighborhood...</option>
+        <option>Victoria Park</option><option>Rio Vista</option><option>Coral Ridge</option>
+        <option>Las Olas Isles</option><option>Flagler Village</option>
+        <option>Downtown Fort Lauderdale</option><option>Lauderdale Beach</option>
+        <option>Tarpon River</option><option>Sailboat Bend</option>
+        <option>Other Fort Lauderdale neighborhood</option>
+        <option>I'm not a Fort Lauderdale resident</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>What's this about?</label>
+      <select id="subject">
+        <option value="">Select a topic...</option>
+        <option>Flood Infrastructure</option><option>Housing Affordability</option>
+        <option>Neighborhood Preservation</option><option>Environmental Resilience</option>
+        <option>Economic Development</option><option>The 14-Year Journey</option>
+        <option>Media / Press Inquiry</option><option>Community Event or Meeting</option>
+        <option>Something else</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Your Message</label><textarea id="message" placeholder="Share what's on your mind. What issues matter most to you? What do you wish city leaders understood better about your neighborhood?"></textarea></div>
+    <button class="form-submit" onclick="handleSubmit()">Send Message →</button>
+    <p class="form-note">Your information will never be shared or sold. This is a personal civic project, not a campaign.</p>
+    <div class="success-msg" id="success-msg">Thank you for reaching out. Your message has been received and I'll read it personally. — Jim</div>
+  </div>
+  <div class="contact-sidebar">
+    <div class="sidebar-block">
+      <div class="sidebar-block-title">Direct Contact</div>
+      <div class="contact-method"><div class="contact-icon">✉</div><div><div class="contact-method-label">Email</div><div class="contact-method-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a9c3c0c4e9cfc6dbddc5c8dccdccdbcdc8c5ccc4c8d0c6db87c6dbce">[email&#160;protected]</a></div><div class="contact-method-desc">Best for detailed questions or media inquiries</div></div></div>
+      <div class="contact-method"><div class="contact-icon">▶</div><div><div class="contact-method-label">YouTube</div><div class="contact-method-value">@FortLauderdaleMayor</div><div class="contact-method-desc">Weekly video updates on the five issues</div></div></div>
+      <div class="contact-method"><div class="contact-icon">◈</div><div><div class="contact-method-label">Instagram</div><div class="contact-method-value">@FortLauderdaleMayor</div><div class="contact-method-desc">Daily observations and civic updates</div></div></div>
+    </div>
+    <div class="sidebar-block">
+      <div class="sidebar-block-title">Follow the Journey</div>
+      <div class="social-grid">
+        <a class="social-btn" href="#">YouTube</a>
+        <a class="social-btn" href="#">Instagram</a>
+        <a class="social-btn" href="#">Newsletter</a>
+        <a class="social-btn" href="https://howtobecomemayor.com">HowToBecomeMayor.com</a>
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <div class="sidebar-block-title">For Journalists</div>
+      <p>Jim Blackburn is available for interviews, commentary on local issues, and background conversations about Fort Lauderdale's civic landscape.</p>
+      <p>Select "Media / Press Inquiry" in the form or email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f3999a9eb3959c81879f928697968197929f969e928a9c81dd9c8194">[email&#160;protected]</a> directly.</p>
+    </div>
+    <div class="sidebar-block">
+      <div class="community-card">
+        <div class="community-btn-title">Trying to become mayor in your city?</div>
+        <p>Join hundreds of citizens across America on the same 14-year journey.</p>
+        <a class="community-btn" href="https://howtobecomemayor.com">Join the Movement →</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
+function handleSubmit() {
+  const fname = document.getElementById('fname').value;
+  const email = document.getElementById('email').value;
+  const message = document.getElementById('message').value;
+  if (!fname || !email || !message) {
+    alert('Please add your name, email, and a message before sending.');
+    return;
+  }
+  document.getElementById('success-msg').style.display = 'block';
+  ['fname', 'lname', 'email', 'neighborhood', 'subject', 'message'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+</script>
+<div id="footer-placeholder"></div>
+
+<script src="/js/components.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

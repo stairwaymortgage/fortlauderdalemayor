@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Jim Blackburn — Fort Lauderdale Mayor Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --navy: #0a1628; --navy-mid: #1a2d4a; --gold: #c9a84c; --gold-light: #e8d5a3; --cream: #f8f5ef; --text: #1a1a1a; --text-muted: #555; --border: rgba(201,168,76,0.25); }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+  .disclosure { background: var(--navy); color: var(--gold-light); font-size: 12px; text-align: center; padding: 10px 20px; letter-spacing: 0.04em; }
+  .disclosure a { color: var(--gold); text-decoration: underline; }
+  .nav { background: var(--cream); border-bottom: 1px solid var(--border); padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); line-height: 1.2; }
+  .nav-logo span { display: block; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; letter-spacing: 0.03em; }
+  .nav-links a.active { color: var(--navy); font-weight: 500; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+  .about-hero { background: var(--navy); padding: 64px 40px; display: grid; grid-template-columns: 1fr 280px; gap: 60px; align-items: center; position: relative; overflow: hidden; }
+  .about-hero::before { content: ''; position: absolute; top: -80px; right: 200px; width: 360px; height: 360px; border-radius: 50%; border: 1px solid rgba(201,168,76,0.08); }
+  .about-hero-text { position: relative; z-index: 1; }
+  .about-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+  .about-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(34px, 4vw, 48px); color: white; font-weight: 700; line-height: 1.15; margin-bottom: 20px; }
+  .about-hero h1 em { color: var(--gold); font-style: normal; }
+  .about-hero-sub { font-size: 16px; color: rgba(255,255,255,0.65); line-height: 1.75; font-weight: 300; max-width: 500px; }
+  .avatar-wrap { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .avatar { width: 200px; height: 200px; border-radius: 4px; background: var(--navy-mid); border: 3px solid rgba(201,168,76,0.35); display: flex; align-items: center; justify-content: center; }
+  .avatar-initials { font-family: 'Playfair Display', serif; font-size: 52px; color: var(--gold); opacity: 0.6; }
+  .avatar-caption { font-size: 12px; color: rgba(255,255,255,0.4); text-align: center; letter-spacing: 0.05em; }
+  .avatar-name { font-size: 15px; color: white; font-weight: 500; text-align: center; }
+  .about-body { max-width: 1000px; padding: 64px 40px; display: grid; grid-template-columns: 1fr 320px; gap: 64px; }
+  .story h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--navy); font-weight: 700; margin-bottom: 20px; line-height: 1.25; margin-top: 36px; }
+  .story h2:first-child { margin-top: 0; }
+  .story p { font-size: 16px; color: var(--text-muted); line-height: 1.85; margin-bottom: 20px; }
+  .story p strong { color: var(--navy); font-weight: 500; }
+  .pull-quote { border-left: 3px solid var(--gold); padding: 20px 24px; margin: 36px 0; background: white; }
+  .pull-quote p { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--navy); line-height: 1.5; margin: 0; font-style: italic; }
+  .divider { height: 1px; background: var(--border); margin: 36px 0; }
+  .commitment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 36px; }
+  .commitment-item { background: white; padding: 24px; }
+  .commitment-item:nth-child(odd) { background: var(--cream); }
+  .commitment-num { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); opacity: 0.5; margin-bottom: 8px; }
+  .commitment-title { font-size: 14px; font-weight: 500; color: var(--navy); margin-bottom: 6px; }
+  .commitment-text { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .sidebar { display: flex; flex-direction: column; gap: 24px; padding-top: 8px; }
+  .sidebar-card { border: 1px solid var(--border); padding: 24px; background: white; }
+  .sidebar-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--navy); font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .fact-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 13px; }
+  .fact-row:last-child { border-bottom: none; }
+  .fact-label { color: var(--text-muted); }
+  .fact-value { color: var(--navy); font-weight: 500; text-align: right; max-width: 60%; }
+  .business-item { padding: 12px 0; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .business-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .business-name { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+  .business-role { font-size: 12px; color: var(--text-muted); }
+  .business-desc { font-size: 11px; color: var(--gold); margin-top: 3px; letter-spacing: 0.03em; }
+  .connect-card { background: var(--navy); border: none; padding: 24px; }
+  .connect-card .sidebar-title { color: white; border-bottom-color: rgba(255,255,255,0.1); }
+  .connect-link { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; color: rgba(255,255,255,0.65); text-decoration: none; }
+  .connect-link:last-child { border-bottom: none; }
+  .connect-icon { width: 28px; height: 28px; border-radius: 2px; background: rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--gold); flex-shrink: 0; }
+  .footer { background: var(--navy); border-top: 1px solid rgba(201,168,76,0.2); padding: 40px 40px 28px; color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.7; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; color: white; margin-bottom: 12px; }
+  .footer-disc { max-width: 600px; margin-bottom: 24px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: var(--gold); font-size: 12px; text-decoration: none; }
+  @media (max-width: 860px) {
+    .about-hero { grid-template-columns: 1fr; padding: 48px 20px; }
+    .avatar-wrap { display: none; }
+    .about-body { grid-template-columns: 1fr; padding: 40px 20px; gap: 40px; }
+    .commitment-grid { grid-template-columns: 1fr; }
+    .nav { padding: 16px 20px; } .nav-links { display: none; } .footer { padding: 32px 20px 24px; }
+  }
+</style>
+
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<div class="about-hero">
+  <div class="about-hero-text">
+    <div class="about-tag">About This Project</div>
+    <h1>I'm <em>Jim Blackburn.</em><br>And I'm going to become<br>Mayor of Fort Lauderdale.</h1>
+    <p class="about-hero-sub">Not tomorrow. Not in five years. I'm giving myself a decade to do it right — by learning this city inside out, earning the trust of its residents, and building the kind of credibility that can't be faked.</p>
+  </div>
+  <div class="avatar-wrap">
+    <div class="avatar"><div class="avatar-initials">JB</div></div>
+    <div class="avatar-name">Jim Blackburn</div>
+    <div class="avatar-caption">Fort Lauderdale Resident<br>Entrepreneur · Civic Leader in Progress</div>
+  </div>
+</div>
+<div class="about-body">
+  <div class="story">
+    <h2>Why I'm doing this publicly — and why it starts now</h2>
+    <p>I'm 47 years old. I've spent my career building businesses — mortgage, real estate, capital, coaching, and education. I know what it takes to build things from scratch and earn trust in competitive markets.</p>
+    <p>But somewhere along the way I started paying closer attention to the city I live in. The streets that flood every king tide. The teachers and nurses who can't afford to rent an apartment here anymore. The neighborhoods fighting to hold onto their character while developers reshape the skyline. The small businesses disappearing from streets that used to define this city.</p>
+    <div class="pull-quote"><p>"Most people see these problems and complain. I decided to study them — and eventually do something about them."</p></div>
+    <p>I have <strong>zero political experience.</strong> I've never run for anything. What I have is time, discipline, and a genuine belief that Fort Lauderdale deserves better civic leadership than it's getting.</p>
+    <p>So I'm starting from the bottom. Attending city commission meetings. Joining neighborhood associations. Applying for advisory boards. Learning how zoning decisions get made, how infrastructure gets funded, how the informal power structures in this city actually work. And documenting every step publicly.</p>
+    <div class="divider"></div>
+    <h2>What I'm committing to over the next 14 years</h2>
+    <div class="commitment-grid">
+      <div class="commitment-item"><div class="commitment-num">01</div><div class="commitment-title">Show up every week</div><div class="commitment-text">Attend city meetings, neighborhood events, and community forums — consistently, not just when it's convenient.</div></div>
+      <div class="commitment-item"><div class="commitment-num">02</div><div class="commitment-title">Study the five issues deeply</div><div class="commitment-text">Flooding, housing, neighborhoods, environment, and economic development. Research, report, and discuss every week.</div></div>
+      <div class="commitment-item"><div class="commitment-num">03</div><div class="commitment-title">Build trust, not a brand</div><div class="commitment-text">Real relationships with real residents. Not a campaign — a decade of service that earns the right to lead.</div></div>
+      <div class="commitment-item"><div class="commitment-num">04</div><div class="commitment-title">Document everything publicly</div><div class="commitment-text">Every meeting attended, every lesson learned, every mistake made. This project runs in public or it doesn't run at all.</div></div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Jim Blackburn</div>
+      <div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Fort Lauderdale, FL</span></div>
+      <div class="fact-row"><span class="fact-label">Age</span><span class="fact-value">47</span></div>
+      <div class="fact-row"><span class="fact-label">Project started</span><span class="fact-value">2026</span></div>
+      <div class="fact-row"><span class="fact-label">Target year</span><span class="fact-value">2040</span></div>
+      <div class="fact-row"><span class="fact-label">Political experience</span><span class="fact-value">None. Starting from zero.</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Professional Background</div>
+      <div class="business-item"><div class="business-name">Stairway Mortgage</div><div class="business-role">Founder</div><div class="business-desc">Mortgage lending · serving Fort Lauderdale</div></div>
+      <div class="business-item"><div class="business-name">Blackburn Business Capital</div><div class="business-role">Manager</div><div class="business-desc">Business capital · lending solutions</div></div>
+      <div class="business-item"><div class="business-name">Blackburn Realty</div><div class="business-role">Partner</div><div class="business-desc">Real estate · serving Fort Lauderdale</div></div>
+      <div class="business-item"><div class="business-name">Stairway Advisors</div><div class="business-role">Professional Advisor Coach</div><div class="business-desc">Coaching loan officers & realtors</div></div>
+      <div class="business-item"><div class="business-name">Stairway Academy</div><div class="business-role">Consumer Financial Coach</div><div class="business-desc">Homebuyer education & financial literacy</div></div>
+      <div class="business-item"><div class="business-name">The Sonflower & the Bear</div><div class="business-role">Author in Progress</div><div class="business-desc">Book in development</div></div>
+    </div>
+    <div class="sidebar-card connect-card">
+      <div class="sidebar-title">Follow the Journey</div>
+      <a class="connect-link" href="#"><div class="connect-icon">▶</div>YouTube — Weekly videos</a>
+      <a class="connect-link" href="#"><div class="connect-icon">◈</div>Instagram — Daily updates</a>
+      <a class="connect-link" href="#"><div class="connect-icon">✉</div>Newsletter — Weekly dispatch</a>
+      <a class="connect-link" href="https://howtobecomemayor.com"><div class="connect-icon">↗</div>HowToBecomeMayor.com</a>
+    </div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+
+<script src="/js/components.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
