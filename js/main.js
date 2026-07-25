@@ -1,29 +1,35 @@
 /* Behavior for the shared nav injected by components.js:
    active-link highlighting, the mobile hamburger menu, and smooth anchor scrolling.
-   Runs after components.js, so the nav is already in the DOM. */
+   Loaded after components.js, so the nav markup is already in the DOM. */
 
+/* "/five-issues.html", "/five-issues/" and "/five-issues" all normalize to "/five-issues"
+   so the highlight works on Vercel's clean URLs and on a plain local file server alike. */
 function flmNormalizePath(pathname) {
-  let p = pathname.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
-  if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
+  var p = pathname.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
+  if (p.length > 1 && p.charAt(p.length - 1) === '/') p = p.slice(0, -1);
   return p === '' ? '/' : p;
 }
 
 function flmHighlightActiveLink() {
-  const links = document.querySelectorAll('.flm-nav-links a');
+  var links = document.querySelectorAll('.flm-nav-links a');
   if (!links.length) return;
-  const current = flmNormalizePath(window.location.pathname);
-  links.forEach(function (a) {
+  var current = flmNormalizePath(window.location.pathname);
+  Array.prototype.forEach.call(links, function (a) {
     a.classList.remove('nav-active');
-    const linkPath = flmNormalizePath(new URL(a.getAttribute('href'), window.location.origin).pathname);
+    a.removeAttribute('aria-current');
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') return;
+    var linkPath = flmNormalizePath(new URL(href, window.location.origin).pathname);
     if (linkPath !== '/' && linkPath === current) {
       a.classList.add('nav-active');
+      a.setAttribute('aria-current', 'page');
     }
   });
 }
 
 function flmInitMobileMenu() {
-  const toggle = document.querySelector('.flm-nav-toggle');
-  const links = document.getElementById('flm-nav-links');
+  var toggle = document.querySelector('.flm-nav-toggle');
+  var links = document.getElementById('flm-nav-links');
   if (!toggle || !links) return;
 
   function close() {
@@ -33,30 +39,37 @@ function flmInitMobileMenu() {
 
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
-    const open = links.classList.toggle('open');
+    var open = links.classList.toggle('open');
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
-  links.querySelectorAll('a').forEach(function (a) {
+  Array.prototype.forEach.call(links.querySelectorAll('a'), function (a) {
     a.addEventListener('click', close);
   });
 
   document.addEventListener('click', function (e) {
     if (!links.contains(e.target) && !toggle.contains(e.target)) close();
   });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 768) close();
+  });
 }
 
 function flmInitSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      const hash = this.getAttribute('href');
-      if (!hash || hash.length < 2) return;
-      const target = document.querySelector(hash);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var hash = a.getAttribute('href');
+    if (!hash || hash.length < 2) return;
+    var target = document.querySelector(hash);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
