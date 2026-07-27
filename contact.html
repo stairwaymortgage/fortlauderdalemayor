@@ -54,7 +54,9 @@
   .community-card p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.7; margin-bottom: 14px; }
   .community-btn-title { font-family: 'Playfair Display', serif; font-size: 15px; color: white; font-weight: 700; margin-bottom: 10px; }
   .community-btn { display: block; width: 100%; padding: 11px; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', sans-serif; text-align: center; text-decoration: none; }
+  .form-submit:disabled { opacity: 0.6; cursor: default; }
   .success-msg { display: none; background: #eaf6ef; border: 1px solid #52b788; border-radius: 2px; padding: 16px 20px; margin-top: 16px; font-size: 14px; color: #1a3a2a; line-height: 1.6; }
+  .error-msg { display: none; background: #fdeceb; border: 1px solid #d9534f; border-radius: 2px; padding: 16px 20px; margin-top: 16px; font-size: 14px; color: #6b1f1c; line-height: 1.6; }
   .footer { background: var(--navy); border-top: 1px solid rgba(201,168,76,0.2); padding: 40px 40px 28px; color: rgba(255,255,255,0.45); font-size: 12px; line-height: 1.7; }
   .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; color: white; margin-bottom: 12px; }
   .footer-disc { max-width: 600px; margin-bottom: 24px; }
@@ -83,14 +85,15 @@
   <div class="contact-form-wrap">
     <div class="form-title">Send a Message</div>
     <p class="form-sub">I read every message personally. Response time is typically 2-3 business days. If you're a journalist on deadline, please note that in your message.</p>
+    <form id="contact-form" novalidate>
     <div class="form-grid">
-      <div class="form-row"><label>First Name</label><input type="text" placeholder="Your first name" id="fname" /></div>
-      <div class="form-row"><label>Last Name</label><input type="text" placeholder="Your last name" id="lname" /></div>
+      <div class="form-row"><label for="fname">First Name</label><input type="text" placeholder="Your first name" id="fname" name="fname" /></div>
+      <div class="form-row"><label for="lname">Last Name</label><input type="text" placeholder="Your last name" id="lname" name="lname" /></div>
     </div>
-    <div class="form-row"><label>Email Address</label><input type="email" placeholder="your@email.com" id="email" /></div>
+    <div class="form-row"><label for="email">Email Address</label><input type="email" placeholder="your@email.com" id="email" name="email" /></div>
     <div class="form-row">
-      <label>Neighborhood (optional)</label>
-      <select id="neighborhood">
+      <label for="neighborhood">Neighborhood (optional)</label>
+      <select id="neighborhood" name="neighborhood">
         <option value="">Select your neighborhood...</option>
         <option>Victoria Park</option><option>Rio Vista</option><option>Coral Ridge</option>
         <option>Las Olas Isles</option><option>Flagler Village</option>
@@ -101,8 +104,8 @@
       </select>
     </div>
     <div class="form-row">
-      <label>What's this about?</label>
-      <select id="subject">
+      <label for="subject">What's this about?</label>
+      <select id="subject" name="subject">
         <option value="">Select a topic...</option>
         <option>Flood Infrastructure</option><option>Housing Affordability</option>
         <option>Neighborhood Preservation</option><option>Environmental Resilience</option>
@@ -111,10 +114,12 @@
         <option>Something else</option>
       </select>
     </div>
-    <div class="form-row"><label>Your Message</label><textarea id="message" placeholder="Share what's on your mind. What issues matter most to you? What do you wish city leaders understood better about your neighborhood?"></textarea></div>
-    <button class="form-submit" onclick="handleSubmit()">Send Message →</button>
+    <div class="form-row"><label for="message">Your Message</label><textarea id="message" name="message" placeholder="Share what's on your mind. What issues matter most to you? What do you wish city leaders understood better about your neighborhood?"></textarea></div>
+    <button class="form-submit" type="submit" id="form-submit">Send Message →</button>
     <p class="form-note">Your information will never be shared or sold. This is a personal civic project, not a campaign.</p>
     <div class="success-msg" id="success-msg">Thank you for reaching out. Your message has been received and I'll read it personally. — Jim</div>
+    <div class="error-msg" id="error-msg" role="alert"></div>
+    </form>
   </div>
   <div class="contact-sidebar">
     <div class="sidebar-block">
@@ -147,20 +152,67 @@
   </div>
 </div>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function handleSubmit() {
-  const fname = document.getElementById('fname').value;
-  const email = document.getElementById('email').value;
-  const message = document.getElementById('message').value;
-  if (!fname || !email || !message) {
-    alert('Please add your name, email, and a message before sending.');
-    return;
+/* Posts the form to /api/contact, which creates the contact in GoHighLevel.
+   Stays on the page either way — success and failure both render inline. */
+(function () {
+  var FIELDS = ['fname', 'lname', 'email', 'neighborhood', 'subject', 'message'];
+  var form = document.getElementById('contact-form');
+  var button = document.getElementById('form-submit');
+  var successMsg = document.getElementById('success-msg');
+  var errorMsg = document.getElementById('error-msg');
+  if (!form) return;
+
+  function showError(text) {
+    errorMsg.textContent = text;
+    errorMsg.style.display = 'block';
   }
-  document.getElementById('success-msg').style.display = 'block';
-  ['fname', 'lname', 'email', 'neighborhood', 'subject', 'message'].forEach(function (id) {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+
+    var payload = {};
+    FIELDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      payload[id] = el ? el.value.trim() : '';
+    });
+
+    if (!payload.fname || !payload.email || !payload.message) {
+      showError('Please add your name, email, and a message before sending.');
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Sending…';
+
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { ok: res.ok, data: data };
+        });
+      })
+      .then(function (result) {
+        if (!result.ok || !result.data.ok) {
+          throw new Error(result.data.error || 'Something went wrong. Please try again.');
+        }
+        successMsg.style.display = 'block';
+        form.reset();
+      })
+      .catch(function (err) {
+        showError(err.message || 'Something went wrong. Please try again, or email directly.');
+      })
+      .then(function () {
+        button.disabled = false;
+        button.textContent = 'Send Message →';
+      });
   });
-}
+})();
 </script>
 <div id="footer-placeholder"></div>
 
