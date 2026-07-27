@@ -29,10 +29,27 @@ contact. The page never redirects — it shows an inline success or error messag
 Neighborhood and subject are stored as tags (`Neighborhood: …`, `Topic: …`)
 alongside a `Website Contact Form` tag, so no custom field setup is required.
 
+### API version
+
+Uses the **GoHighLevel v2 API** at `https://services.leadconnectorhq.com` with a
+Private Integration Token. Every request sends:
+
+```
+Authorization: Bearer <GHL_API_TOKEN>
+Version: 2021-07-28
+Content-Type: application/json
+```
+
+The `Version` header is **mandatory** — without it v2 returns
+`401 {"message":"version header was not found."}` even with a valid token.
+
+The token must have the **`contacts.write`** scope (add `contacts.readonly` too),
+granted when the Private Integration is created in GHL.
+
 ### Required Vercel environment variables
 | Variable | What it is |
 | --- | --- |
-| `GHL_API_TOKEN` | GoHighLevel location API key (Settings → Business Info → API Key) |
+| `GHL_API_TOKEN` | GoHighLevel **Private Integration Token**, starts with `pit-` (Settings → Private Integrations) |
 | `GHL_LOCATION_ID` | GoHighLevel location/sub-account ID |
 
 Optional:
@@ -57,10 +74,24 @@ Common responses:
 
 | GHL response | Meaning | Fix |
 | --- | --- | --- |
-| `401 {"msg":"Api key is invalid."}` | `GHL_API_TOKEN` is wrong, expired, or the wrong type | Re-copy the Location API Key from Settings → Business Info → API Key and redeploy |
-| `401` + log note about a `pit-` token | A v2 Private Integration token was used against the v1 host | Use a v1 Location API Key, or migrate the function to `https://services.leadconnectorhq.com` with a `Version: 2021-07-28` header |
+| `401 {"message":"Invalid Private Integration token"}` | `GHL_API_TOKEN` is wrong, revoked, or from another location | Re-copy the token from Settings → Private Integrations and redeploy |
+| `401 {"message":"version header was not found."}` | The `Version` header is missing | Should not happen — check `GHL_API_VERSION` in `api/contact.js` |
+| `401 {"msg":"Api key is invalid."}` | A **v1** response — the request went to the old host | Confirm `GHL_BASE` is `https://services.leadconnectorhq.com` |
+| `403` | Token lacks the required scope | Add `contacts.write` to the Private Integration |
 | `400` / `422` | Payload validation error | The logged response body names the offending field |
 | `404` | Wrong path for this API version | Check `GHL_BASE` in `api/contact.js` |
+
+If the log says `WRONG TOKEN TYPE`, the token is a v1 location API key (a JWT)
+rather than a `pit-` token; the v2 host will always reject it.
+
+### Repeat submissions
+
+v2 refuses to create a contact whose email already exists, returning
+`400 "This location does not allow duplicated contacts."` with the existing id in
+`meta.contactId`. The function reuses that id and attaches the note to the
+existing contact, so someone writing in a second time still gets through. The log
+line reads `existingContact=true`. Note that tags are only applied on first
+creation.
 
 The function normalizes `GHL_API_TOKEN` before use — a pasted `Bearer ` prefix,
 surrounding quotes, or a trailing newline are stripped, and the log says so.

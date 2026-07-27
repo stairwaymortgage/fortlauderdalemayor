@@ -1,21 +1,22 @@
 /* Vercel serverless function: receives the contact.html form and creates a
    contact in GoHighLevel, then attaches the subject + message as a note.
 
+   Uses the GoHighLevel **v2** API with a Private Integration Token ("pit-…").
    Credentials come from Vercel environment variables and are never sent to the
-   browser: GHL_API_TOKEN (location API key) and GHL_LOCATION_ID.
+   browser: GHL_API_TOKEN (Private Integration Token) and GHL_LOCATION_ID.
 
    Debugging: every GHL call is logged to the Vercel function log with the
    status, the response headers, and the complete raw response body. Set
    GHL_DEBUG_ERRORS=1 to also return GHL's own error text in the JSON response
    so the failure is visible in the browser without opening the Vercel logs. */
 
-/* The v1 REST host is correct for a GoHighLevel *location API key* (Settings →
-   Business Info → API Key), which is what this function expects. It is NOT the
-   host for v2 Private Integration tokens — those start with "pit-", must go to
-   https://services.leadconnectorhq.com and require a Version header. Sending a
-   v2 token here comes back as 401 Unauthorized, so checkToken() calls that out
-   explicitly in the log. */
-const GHL_BASE = 'https://rest.gohighlevel.com/v1';
+/* v2 host. Requires a Private Integration Token (Settings → Private
+   Integrations) plus the Version header below on every request. The old v1 host
+   (rest.gohighlevel.com/v1) takes a Location API Key instead and rejects "pit-"
+   tokens with 401 "Api key is invalid." — checkToken() flags a token that does
+   not match this host. */
+const GHL_BASE = 'https://services.leadconnectorhq.com';
+const GHL_API_VERSION = '2021-07-28';
 
 const NEIGHBORHOOD_FIELD_ID = process.env.GHL_NEIGHBORHOOD_FIELD_ID || '';
 const DEBUG_ERRORS = process.env.GHL_DEBUG_ERRORS === '1' || process.env.GHL_DEBUG_ERRORS === 'true';
@@ -39,17 +40,18 @@ function normalizeToken(raw) {
   return token.replace(/^["']|["']$/g, '');
 }
 
-/* Describes the token WITHOUT logging it: enough to tell a v1 key from a v2
-   token, and to catch stray whitespace, but never the secret itself. */
+/* Describes the token WITHOUT logging it: enough to tell a v2 Private
+   Integration Token from a v1 location API key, and to catch stray whitespace,
+   but never the secret itself. */
 function checkToken(raw, token) {
   const notes = [];
   if (raw !== token) notes.push('token had surrounding whitespace/quotes or a "Bearer " prefix (stripped before use)');
   if (token.startsWith('pit-')) {
-    notes.push('WRONG TOKEN TYPE: this is a v2 Private Integration token ("pit-"). The v1 host ' + GHL_BASE + ' will reject it with 401. Use a Location API Key here, or switch this function to https://services.leadconnectorhq.com with a "Version: 2021-07-28" header.');
+    notes.push('token shape looks like a v2 Private Integration Token ("pit-") — correct for ' + GHL_BASE);
   } else if (token.split('.').length === 3) {
-    notes.push('token shape looks like a v1 location API key (JWT) — correct for ' + GHL_BASE);
+    notes.push('WRONG TOKEN TYPE: this is a v1 location API key (JWT). The v2 host ' + GHL_BASE + ' expects a Private Integration Token starting with "pit-" (Settings → Private Integrations). A v1 key here returns 401.');
   } else {
-    notes.push('token shape is unrecognized (expected a 3-part JWT for the v1 API)');
+    notes.push('token shape is unrecognized (expected a "pit-…" Private Integration Token for the v2 API)');
   }
   return { length: token.length, notes: notes };
 }
@@ -61,10 +63,13 @@ async function ghlRequest(path, payload, token) {
   const url = GHL_BASE + path;
   const started = Date.now();
 
+  /* The Version header is mandatory on the v2 API — omitting it returns 401
+     even when the token is valid. */
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: 'Bearer ' + token,
+      Version: GHL_API_VERSION,
       'Content-Type': 'application/json',
       Accept: 'application/json'
     },
@@ -129,7 +134,7 @@ function logGhlResult(label, requestId, result, payload) {
        submission, so nothing new is exposed to the log. */
     lines.push('  request payload sent: ' + JSON.stringify(payload));
     if (result.status === 401 || result.status === 403) {
-      lines.push('  hint: 401/403 means the Authorization header was rejected — check GHL_API_TOKEN is a v1 Location API Key, not expired, and belongs to GHL_LOCATION_ID.');
+      lines.push('  hint: 401/403 means the Authorization header was rejected — check GHL_API_TOKEN is a "pit-" Private Integration Token, that the Version header is being sent, that the token has the contacts.write / contacts.readonly scopes, and that it belongs to GHL_LOCATION_ID.');
     }
     if (result.status === 404) {
       lines.push('  hint: 404 on ' + result.url + ' means the path is wrong for this API version.');
@@ -153,6 +158,8 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'Method not allowed.' });
   }
 
+  /* Same two env vars as before the v2 migration; only GHL_API_TOKEN's expected
+     value changed (Private Integration Token instead of Location API Key). */
   const rawToken = process.env.GHL_API_TOKEN;
   const token = normalizeToken(rawToken);
   const locationId = clean(process.env.GHL_LOCATION_ID, 100);
@@ -169,6 +176,7 @@ module.exports = async function handler(req, res) {
   const tokenCheck = checkToken(rawToken, token);
   console.log(
     '[' + requestId + '] GHL config: base=' + GHL_BASE +
+    ', apiVersion=' + GHL_API_VERSION +
     ', locationId=' + locationId +
     ', token length=' + tokenCheck.length +
     '\n  ' + tokenCheck.notes.join('\n  ')
@@ -221,8 +229,10 @@ module.exports = async function handler(req, res) {
     tags: tags
   };
   if (phone) contactPayload.phone = phone;
+  /* v2 takes customFields as an array of {id, value} objects. (v1 used a
+     customField object keyed by field id — that shape is rejected here.) */
   if (neighborhood && NEIGHBORHOOD_FIELD_ID) {
-    contactPayload.customField = { [NEIGHBORHOOD_FIELD_ID]: neighborhood };
+    contactPayload.customFields = [{ id: NEIGHBORHOOD_FIELD_ID, value: neighborhood }];
   }
 
   let contactResult;
@@ -246,20 +256,38 @@ module.exports = async function handler(req, res) {
 
   logGhlResult('GHL create contact', requestId, contactResult, contactPayload);
 
-  if (!contactResult.ok) {
-    return res.status(502).json({
-      ok: false,
-      error: 'Your message could not be delivered. Please try again or email directly.',
-      debug: DEBUG_ERRORS ? {
-        status: contactResult.status,
-        ghlError: ghlErrorMessage(contactResult),
-        ghlBody: contactResult.raw
-      } : undefined
-    });
-  }
+  /* v1 quietly upserted on a repeat email; v2 rejects the create with 400
+     "This location does not allow duplicated contacts." and returns the existing
+     id in meta.contactId. Reuse that id so someone writing in a second time
+     still gets their message through instead of seeing a delivery error. */
+  let contactId = null;
+  let wasDuplicate = false;
 
-  const contact = (contactResult.data && (contactResult.data.contact || contactResult.data)) || {};
-  const contactId = contact.id || contact.contactId || null;
+  if (contactResult.ok) {
+    const contact = (contactResult.data && (contactResult.data.contact || contactResult.data)) || {};
+    contactId = contact.id || contact.contactId || null;
+  } else {
+    const meta = (contactResult.data && contactResult.data.meta) || {};
+    const existingId = meta.contactId || null;
+    if (existingId) {
+      contactId = existingId;
+      wasDuplicate = true;
+      console.log(
+        '[' + requestId + '] Contact already exists (matched on ' + (meta.matchingField || 'unknown field') +
+        '); reusing id ' + existingId + ' and attaching the note to it.'
+      );
+    } else {
+      return res.status(502).json({
+        ok: false,
+        error: 'Your message could not be delivered. Please try again or email directly.',
+        debug: DEBUG_ERRORS ? {
+          status: contactResult.status,
+          ghlError: ghlErrorMessage(contactResult),
+          ghlBody: contactResult.raw
+        } : undefined
+      });
+    }
+  }
 
   /* The note carries the subject and message so the context survives even
      though GHL only stores name/email/phone/tags on the contact record. */
@@ -296,7 +324,10 @@ module.exports = async function handler(req, res) {
     );
   }
 
-  console.log('[' + requestId + '] Submission complete. contactId=' + contactId + ' noteAdded=' + noteAdded);
+  console.log(
+    '[' + requestId + '] Submission complete. contactId=' + contactId +
+    ' noteAdded=' + noteAdded + ' existingContact=' + wasDuplicate
+  );
 
   /* A failed note does not fail the submission — the contact exists, and the
      message text is in the logs above for recovery. */
