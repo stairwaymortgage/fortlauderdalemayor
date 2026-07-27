@@ -35,11 +35,36 @@ alongside a `Website Contact Form` tag, so no custom field setup is required.
 | `GHL_API_TOKEN` | GoHighLevel location API key (Settings → Business Info → API Key) |
 | `GHL_LOCATION_ID` | GoHighLevel location/sub-account ID |
 
-Optional: set `GHL_NEIGHBORHOOD_FIELD_ID` to a GHL custom field ID and the
-neighborhood will also be written to that field.
+Optional:
+- `GHL_NEIGHBORHOOD_FIELD_ID` — a GHL custom field ID; the neighborhood is also
+  written to that field.
+- `GHL_DEBUG_ERRORS` — set to `1` to include GHL's own error text in the API
+  response (`debug` key) and log it to the browser console. Leave unset in
+  normal operation.
 
 **Never commit these values.** Set them in Vercel → Project → Settings →
 Environment Variables, then redeploy so the function picks them up.
+
+### Debugging "Your message could not be delivered"
+
+That message means GHL rejected the contact create. Open **Vercel → Project →
+Logs**, submit the form, and find the `GHL create contact` block. Every
+submission gets a short request id (e.g. `[kp6e7x]`) so its lines group
+together, and the block prints the status, the response headers, the **full raw
+GHL response body**, and the payload that was sent.
+
+Common responses:
+
+| GHL response | Meaning | Fix |
+| --- | --- | --- |
+| `401 {"msg":"Api key is invalid."}` | `GHL_API_TOKEN` is wrong, expired, or the wrong type | Re-copy the Location API Key from Settings → Business Info → API Key and redeploy |
+| `401` + log note about a `pit-` token | A v2 Private Integration token was used against the v1 host | Use a v1 Location API Key, or migrate the function to `https://services.leadconnectorhq.com` with a `Version: 2021-07-28` header |
+| `400` / `422` | Payload validation error | The logged response body names the offending field |
+| `404` | Wrong path for this API version | Check `GHL_BASE` in `api/contact.js` |
+
+The function normalizes `GHL_API_TOKEN` before use — a pasted `Bearer ` prefix,
+surrounding quotes, or a trailing newline are stripped, and the log says so.
+The token itself is never logged; only its length and shape.
 
 ---
 

@@ -199,6 +199,11 @@
       })
       .then(function (result) {
         if (!result.ok || !result.data.ok) {
+          /* data.debug only exists when GHL_DEBUG_ERRORS=1 is set on the
+             function, so this stays invisible in normal operation. */
+          if (result.data.debug) {
+            console.error('Contact form debug:', result.data.debug);
+          }
           throw new Error(result.data.error || 'Something went wrong. Please try again.');
         }
         successMsg.style.display = 'block';
