@@ -214,10 +214,11 @@ module.exports = async function handler(req, res) {
   }
 
   /* Tags keep the routing context queryable inside GHL without needing custom
-     field IDs; the full message body goes into the note below. */
-  const tags = ['Website Contact Form'];
-  if (neighborhood) tags.push('Neighborhood: ' + neighborhood);
-  if (subject) tags.push('Topic: ' + subject);
+     field IDs; the first two name the originating site and form so a contact's
+     origin is unambiguous. The full message body goes into the note below. */
+  const tags = ['fortlauderdalemayor.org', 'website contact form'];
+  if (neighborhood) tags.push('neighborhood: ' + neighborhood);
+  if (subject) tags.push('topic: ' + subject);
 
   const contactPayload = {
     locationId: locationId,
@@ -225,7 +226,7 @@ module.exports = async function handler(req, res) {
     lastName: lname,
     name: [fname, lname].filter(Boolean).join(' '),
     email: email,
-    source: 'FortLauderdaleMayor.org contact form',
+    source: 'fortlauderdalemayor.org',
     tags: tags
   };
   if (phone) contactPayload.phone = phone;
