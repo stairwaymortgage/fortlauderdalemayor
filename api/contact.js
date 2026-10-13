@@ -216,7 +216,7 @@ module.exports = async function handler(req, res) {
   /* Tags keep the routing context queryable inside GHL without needing custom
      field IDs; the first two name the originating site and form so a contact's
      origin is unambiguous. The full message body goes into the note below. */
-  const tags = ['fortlauderdalemayor.org', 'website contact form'];
+  const tags = ['fortlauderdalemayor.org', 'website contact form', 'source-fortlauderdalemayor'];
   if (neighborhood) tags.push('neighborhood: ' + neighborhood);
   if (subject) tags.push('topic: ' + subject);
 
