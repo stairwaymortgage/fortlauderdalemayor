@@ -22,9 +22,14 @@
   .filter-btn { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 16px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 2px; font-family: 'DM Sans', sans-serif; }
   .filter-btn.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
   .post-list { display: flex; flex-direction: column; }
-  .post-card { background: white; border: 1px solid var(--border); border-bottom: none; padding: 30px 32px; cursor: pointer; display: block; text-decoration: none; transition: background 0.15s; }
+  .post-card { background: white; border: 1px solid var(--border); border-bottom: none; cursor: pointer; display: grid; grid-template-columns: 220px 1fr; text-decoration: none; transition: background 0.15s; overflow: hidden; }
   .post-card:last-child { border-bottom: 1px solid var(--border); }
   .post-card:hover { background: #fffdf8; }
+  .post-card-media { background: var(--navy); min-height: 160px; }
+  .post-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .post-card-ph { width: 100%; height: 100%; min-height: 160px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 18px; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); }
+  .post-card-ph span { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.92; line-height: 1.4; }
+  .post-card-body { padding: 26px 30px; }
   .post-card-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
   .post-card h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
   .post-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 14px; max-width: 600px; }
@@ -44,7 +49,7 @@
   .follow-card .sidebar-title { color: white; border-bottom-color: rgba(255,255,255,0.1); }
   .follow-card p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 16px; }
   .follow-btn { display: inline-block; width: 100%; text-align: center; padding: 11px; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: none; }
-  @media (max-width: 860px) { .blog-body { grid-template-columns: 1fr; } .sidebar { display: none; } .blog-hero { padding: 48px 20px 40px; } .blog-body { padding: 40px 20px; } }
+  @media (max-width: 860px) { .blog-body { grid-template-columns: 1fr; } .sidebar { display: none; } .blog-hero { padding: 48px 20px 40px; } .blog-body { padding: 40px 20px; } .post-card { grid-template-columns: 1fr; } .post-card-media { min-height: 190px; } }
 </style>
 </head>
 <body>
@@ -118,12 +123,16 @@
     if (!posts.length) { listEl.innerHTML = '<p class="blog-empty">No dispatches in this category yet.</p>'; return; }
     listEl.innerHTML = posts.map(function (p) {
       var href = '/blog/' + esc(p.slug);
-      return '<a class="post-card" href="' + href + '">' +
+      var media = p.heroImage
+        ? '<div class="post-card-media"><img src="' + esc(p.heroImage) + '" alt="' + esc(p.heroAlt || '') + '" loading="lazy"></div>'
+        : '<div class="post-card-media"><div class="post-card-ph"><span>' + esc(labelFor[p.tag] || p.tag || 'Dispatch') + '</span></div></div>';
+      return '<a class="post-card" href="' + href + '">' + media +
+        '<div class="post-card-body">' +
         '<div class="post-card-tag">' + esc(labelFor[p.tag] || p.tag || '') + '</div>' +
         '<h2>' + esc(p.title) + '</h2>' +
         '<p>' + esc(p.description) + '</p>' +
         '<div class="post-card-meta"><span>' + prettyDate(p.date) + '</span>' +
-        '<span class="post-card-read">Read &rarr;</span></div></a>';
+        '<span class="post-card-read">Read &rarr;</span></div></div></a>';
     }).join('');
   }
 
