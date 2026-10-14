@@ -3,6 +3,7 @@
     { "source": "/five-issues", "destination": "/five-issues.html" },
     { "source": "/journey",     "destination": "/journey.html" },
     { "source": "/blog",        "destination": "/blog.html" },
+    { "source": "/blog/:slug",  "destination": "/blog/:slug.html" },
     { "source": "/about",       "destination": "/about.html" },
     { "source": "/contact",     "destination": "/contact.html" }
   ]
